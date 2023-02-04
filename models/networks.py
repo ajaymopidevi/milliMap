@@ -114,8 +114,12 @@ class GANLoss(nn.Module):
 
 class VGGLoss(nn.Module):
     def __init__(self, gpu_ids):
-        super(VGGLoss, self).__init__()        
-        self.vgg = Vgg19().cuda()
+        super(VGGLoss, self).__init__()
+        self.vgg = Vgg19()
+        if len(gpu_ids) > 0:
+            assert (torch.cuda.is_available())
+            self.vgg.cuda(gpu_ids[0])
+
         self.criterion = nn.L1Loss()
         self.weights = [1.0/32, 1.0/16, 1.0/8, 1.0/4, 1.0]        
 
@@ -140,7 +144,7 @@ class PriorLoss(nn.Module):
 
                                       [[-1.0, -1.0, -1.0],
                                       [-1.0, 8.0, -1.0],
-                                      [-1.0, -1.0, -1.0]]]).cuda()
+                                      [-1.0, -1.0, -1.0]]])
 
         # 3 line detector: 1. horizontal line 2. vertical line and 3. 45 degree cross line
         self.line_kernel = torch.Tensor([[[-1.0, -1.0, -1.0],
@@ -157,7 +161,12 @@ class PriorLoss(nn.Module):
 
                                           [[2.0, -1.0, -1.0],
                                           [-1.0, 2.0, -1.0],
-                                          [-1.0, -1.0, 2.0]]]).cuda()
+                                          [-1.0, -1.0, 2.0]]])
+        if len(gpu_ids) > 0:
+            assert (torch.cuda.is_available())
+            self.edge_kernel.cuda(gpu_ids[0])
+            self.line_kernel.cuda(gpu_ids[0])
+
         # self.line_kernel = torch.Tensor([[[-1.0, -1.0, -1.0],
         #                                   [2.0, 2.0, 2.0],
         #                                   [-1.0, -1.0, -1.0]],

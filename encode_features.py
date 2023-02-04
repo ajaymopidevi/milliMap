@@ -30,7 +30,8 @@ if reencode:
 	for label in range(opt.label_nc):
 		features[label] = np.zeros((0, opt.feat_num+1))
 	for i, data in enumerate(dataset):    
-	    feat = model.module.encode_features(data['image'], data['inst'])
+	    #feat = model.module.encode_features(data['image'], data['inst'])
+		feat = model.encode_features(data['image'], data['inst'])
 	    for label in range(opt.label_nc):
 	    	features[label] = np.append(features[label], feat[label], axis=0) 
 	        
